@@ -1,4 +1,4 @@
-INSERT INTO tb_category (name) VALUES ('Electronics');
-INSERT INTO tb_category (name) VALUES ('Toys');
-INSERT INTO tb_category (name) VALUES ('Garden');
-INSERT INTO tb_category (name) VALUES ('Hardware');
+INSERT INTO tb_category (name, created_At) VALUES ('Books',now());
+INSERT INTO tb_category (name, created_At) VALUES ('Electronics',now());
+INSERT INTO tb_category (name, created_At) VALUES ('Computers',now());
+
