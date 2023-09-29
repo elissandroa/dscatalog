@@ -43,7 +43,6 @@ public class Product implements Serializable {
 	}
 
 	public Product(Long id, String name, String description, Double price, String imgUrl, Instant date) {
-		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -90,6 +89,11 @@ public class Product implements Serializable {
 
 	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
+	}
+	
+
+	public void setDate(Instant date) {
+		this.date = date;
 	}
 
 	public Instant getDate() {
