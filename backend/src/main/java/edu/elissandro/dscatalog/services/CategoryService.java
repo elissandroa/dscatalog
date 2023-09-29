@@ -11,6 +11,7 @@ import edu.elissandro.dscatalog.dto.CategoryDTO;
 import edu.elissandro.dscatalog.entities.Category;
 import edu.elissandro.dscatalog.repositories.CategoryRepository;
 import edu.elissandro.dscatalog.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class CategoryService {
@@ -38,5 +39,18 @@ public class CategoryService {
 		entity = repository.save(entity);
 		return new CategoryDTO(entity);
 	}
+	
+	@Transactional
+	public CategoryDTO update(Long id, CategoryDTO dto) {
+		try {
+			Category entity = repository.getReferenceById(id);
+			entity.setName(dto.getName());
+			entity = repository.save(entity);
+			return new CategoryDTO(entity);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Id not found "+ id);
+		} 
+	}
+	
 
 }
