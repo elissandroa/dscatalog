@@ -3,9 +3,11 @@ package edu.elissandro.dscatalog.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.elissandro.dscatalog.dto.CategoryDTO;
@@ -14,6 +16,7 @@ import edu.elissandro.dscatalog.entities.Category;
 import edu.elissandro.dscatalog.entities.Product;
 import edu.elissandro.dscatalog.repositories.CategoryRepository;
 import edu.elissandro.dscatalog.repositories.ProductRepository;
+import edu.elissandro.dscatalog.services.exceptions.DatabaseException;
 import edu.elissandro.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -34,7 +37,7 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public ProductDTO findById(Long id) {
 		Optional<Product> obj = repository.findById(id);
-		Product entity = obj.orElseThrow(() ->  new ResourceNotFoundException("Resource not found"));
+		Product entity = obj.orElseThrow(() ->  new ResourceNotFoundException("Entity not found"));
 		return new ProductDTO(entity, entity.getCategories());
 	}
 	
@@ -53,6 +56,20 @@ public class ProductService {
 		entity = repository.save(entity);
 		return new ProductDTO(entity);
 	}
+	
+	
+	@Transactional(propagation = Propagation.SUPPORTS)
+	public void delete (Long id) {
+		if(!repository.existsById(id)) {
+			throw new ResourceNotFoundException("Resource not found");
+		}
+		try {
+			repository.deleteById(id);
+		} catch(DataIntegrityViolationException e) {
+			throw new DatabaseException("Integrity failure");
+		}
+		
+	}
 
 	private void copyDtoToEntity(Product entity, ProductDTO dto) {
 		entity.setName(dto.getName());
@@ -69,6 +86,5 @@ public class ProductService {
 		}
 		
 	}
-	
-	
+
 }
